@@ -5,6 +5,10 @@ import { z } from "zod";
 // Дешёвая модель GPT-5 семейства для текстовых задач
 const MODEL = "gpt-5-mini";
 
+// reasoning почти не нужен для генерации текста — minimal даёт скорость.
+const FAST = { openai: { reasoningEffort: "minimal" as const } };
+const JUDGE = { openai: { reasoningEffort: "low" as const } };
+
 // ---------- Генерация вакансии ----------
 
 export const vacancySchema = z.object({
@@ -29,6 +33,7 @@ export interface VacancyInput {
 export async function generateVacancy(input: VacancyInput): Promise<GeneratedVacancy> {
   const { object } = await generateObject({
     model: openai(MODEL),
+    providerOptions: FAST,
     schema: vacancySchema,
     prompt: `Ты — опытный HR в казахстанской IT-компании. Создай профессиональное описание вакансии на русском языке.
 
@@ -58,6 +63,7 @@ export async function adaptVacancy(
 
   const { text } = await generateText({
     model: openai(MODEL),
+    providerOptions: FAST,
     prompt: `Адаптируй вакансию "${vacancy.title}" под площадку. ${styleMap[platform]}
 
 Описание: ${vacancy.description}
@@ -85,6 +91,7 @@ export async function generateInterviewQuestions(vacancy: {
 }): Promise<string[]> {
   const { object } = await generateObject({
     model: openai(MODEL),
+    providerOptions: FAST,
     schema: questionsSchema,
     prompt: `Ты проводишь первичное собеседование на позицию "${vacancy.title}".
 ${vacancy.stack?.length ? `Стек: ${vacancy.stack.join(", ")}` : ""}
@@ -119,6 +126,7 @@ export async function evaluateInterview(
 
   const { object } = await generateObject({
     model: openai(MODEL),
+    providerOptions: JUDGE,
     schema: reportSchema,
     prompt: `Ты — опытный HR. Оцени кандидата на позицию "${vacancyTitle}" по результатам первичного интервью.
 
