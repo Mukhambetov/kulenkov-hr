@@ -1,5 +1,5 @@
 services:
-  postgres:
+  kulenkovdb:
     image: postgres:16-alpine
     environment:
       POSTGRES_DB: kulenkov_hr
@@ -16,7 +16,7 @@ services:
   app:
     build: .
     environment:
-      DATABASE_URL: postgresql://kulenkov:kulenkov_hr_db_2026@postgres:5432/kulenkov_hr
+      DATABASE_URL: postgresql://kulenkov:kulenkov_hr_db_2026@kulenkovdb:5432/kulenkov_hr
       AUTH_SECRET: ${AUTH_SECRET}
       AUTH_TRUST_HOST: "true"
       OPENAI_API_KEY: ${OPENAI_API_KEY}
@@ -24,7 +24,7 @@ services:
     expose:
       - "3000"
     depends_on:
-      postgres:
+      kulenkovdb:
         condition: service_healthy
 
 volumes:
