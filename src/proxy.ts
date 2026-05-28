@@ -1,15 +1,19 @@
-import { auth } from "@/lib/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/lib/auth.config";
 import { NextResponse } from "next/server";
+
+// Edge-safe: authConfig без Prisma/bcrypt. Проверяем только JWT из куки.
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const { pathname } = req.nextUrl;
 
-  // Публичные роуты
   const isPublic =
     pathname === "/login" ||
     pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/interview/"); // интервью кандидата по токену
+    pathname.startsWith("/api/realtime") ||
+    pathname.startsWith("/interview/");
 
   if (!isLoggedIn && !isPublic) {
     return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
