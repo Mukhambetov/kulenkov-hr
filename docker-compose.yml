@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: kulenkov
       POSTGRES_PASSWORD: kulenkov_hr_db_2026
     volumes:
-      - kulenkov_pg_data:/var/lib/postgresql/data
+      - kulenkov_pg_data_v2:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U kulenkov -d kulenkov_hr"]
       interval: 10s
@@ -28,4 +28,4 @@ services:
         condition: service_healthy
 
 volumes:
-  kulenkov_pg_data:
+  kulenkov_pg_data_v2:
