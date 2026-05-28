@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_DB: kulenkov_hr
       POSTGRES_USER: kulenkov
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-kulenkov_secret}
+      POSTGRES_PASSWORD: kulenkov_hr_db_2026
     volumes:
       - kulenkov_pg_data:/var/lib/postgresql/data
     healthcheck:
@@ -16,7 +16,7 @@ services:
   app:
     build: .
     environment:
-      DATABASE_URL: postgresql://kulenkov:${DB_PASSWORD:-kulenkov_secret}@postgres:5432/kulenkov_hr
+      DATABASE_URL: postgresql://kulenkov:kulenkov_hr_db_2026@postgres:5432/kulenkov_hr
       AUTH_SECRET: ${AUTH_SECRET}
       AUTH_TRUST_HOST: "true"
       OPENAI_API_KEY: ${OPENAI_API_KEY}
