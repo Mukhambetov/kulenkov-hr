@@ -19,7 +19,7 @@ services:
       DATABASE_URL: postgresql://kulenkov:${DB_PASSWORD:-kulenkov_secret}@postgres:5432/kulenkov_hr
       AUTH_SECRET: ${AUTH_SECRET}
       AUTH_TRUST_HOST: "true"
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
       NODE_ENV: production
     expose:
       - "3000"

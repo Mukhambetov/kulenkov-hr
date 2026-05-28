@@ -1,8 +1,9 @@
-import { anthropic } from "@ai-sdk/anthropic";
+import { openai } from "@ai-sdk/openai";
 import { generateObject, generateText } from "ai";
 import { z } from "zod";
 
-const MODEL = "claude-sonnet-4-6";
+// Дешёвая модель GPT-5 семейства для текстовых задач
+const MODEL = "gpt-5-mini";
 
 // ---------- Генерация вакансии ----------
 
@@ -27,7 +28,7 @@ export interface VacancyInput {
 
 export async function generateVacancy(input: VacancyInput): Promise<GeneratedVacancy> {
   const { object } = await generateObject({
-    model: anthropic(MODEL),
+    model: openai(MODEL),
     schema: vacancySchema,
     prompt: `Ты — опытный HR в казахстанской IT-компании. Создай профессиональное описание вакансии на русском языке.
 
@@ -56,7 +57,7 @@ export async function adaptVacancy(
   };
 
   const { text } = await generateText({
-    model: anthropic(MODEL),
+    model: openai(MODEL),
     prompt: `Адаптируй вакансию "${vacancy.title}" под площадку. ${styleMap[platform]}
 
 Описание: ${vacancy.description}
@@ -83,7 +84,7 @@ export async function generateInterviewQuestions(vacancy: {
   stack?: string[];
 }): Promise<string[]> {
   const { object } = await generateObject({
-    model: anthropic(MODEL),
+    model: openai(MODEL),
     schema: questionsSchema,
     prompt: `Ты проводишь первичное собеседование на позицию "${vacancy.title}".
 ${vacancy.stack?.length ? `Стек: ${vacancy.stack.join(", ")}` : ""}
@@ -117,7 +118,7 @@ export async function evaluateInterview(
     .join("\n\n");
 
   const { object } = await generateObject({
-    model: anthropic(MODEL),
+    model: openai(MODEL),
     schema: reportSchema,
     prompt: `Ты — опытный HR. Оцени кандидата на позицию "${vacancyTitle}" по результатам первичного интервью.
 

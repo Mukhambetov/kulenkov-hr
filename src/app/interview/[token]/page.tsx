@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import { InterviewChat } from "./interview-chat";
+import { InterviewModes } from "./interview-modes";
 
 export default async function InterviewPage({
   params,
@@ -41,7 +41,7 @@ export default async function InterviewPage({
             <p className="font-medium">Срок интервью истёк</p>
           </div>
         ) : (
-          <InterviewChat
+          <InterviewModes
             token={token}
             questions={(interview.questions as string[]) ?? []}
           />
