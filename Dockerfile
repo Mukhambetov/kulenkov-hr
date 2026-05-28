@@ -33,13 +33,9 @@ RUN addgroup --system --gid 1001 nodejs \
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-# Prisma CLI + схема + конфиг для db push при старте
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/prisma.config.ts ./
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/dotenv ./node_modules/dotenv
-COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+# Схема SQL + скрипт инициализации БД (через pg, без prisma CLI)
+COPY --from=builder /app/prisma/init.sql ./prisma/init.sql
+COPY --from=builder /app/scripts/init-db.mjs ./scripts/init-db.mjs
 
 COPY --chown=nextjs:nodejs docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
