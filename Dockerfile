@@ -1,6 +1,6 @@
 # ---- deps ----
 FROM node:22-alpine AS deps
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@8.9.0 --activate
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma
@@ -9,8 +9,11 @@ RUN pnpm install --frozen-lockfile
 
 # ---- builder ----
 FROM node:22-alpine AS builder
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@8.9.0 --activate
 WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+# Dummy DATABASE_URL чтобы сборка не падала на инстанцировании prisma
+ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Prisma client генерируется, затем сборка Next standalone
