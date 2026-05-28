@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: kulenkov_hr
+      POSTGRES_USER: kulenkov
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-kulenkov_secret}
+    volumes:
+      - kulenkov_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kulenkov -d kulenkov_hr"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://kulenkov:${DB_PASSWORD:-kulenkov_secret}@postgres:5432/kulenkov_hr
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_TRUST_HOST: "true"
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      NODE_ENV: production
+    expose:
+      - "3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  kulenkov_pg_data:
